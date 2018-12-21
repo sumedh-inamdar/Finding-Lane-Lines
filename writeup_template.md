@@ -1,16 +1,12 @@
-@@ -1,4 +1,4 @@
-# **Finding Lane Lines on the Road**
+
 # **Finding Lane Lines on the Road**
 
-## Writeup Template
-
-@ -23,81 +23,25 @@ The goals / steps of this project are the following:
 
 ### 1. Describe your pipeline. As part of the description, explain how you modified the draw_lines() function.
 
 
 My software pipeline consisted of 10 steps:
-[image1]:[./test_images/solidYellowCurve.jpg] "Original Solid Yellow Curve"
+[image1]:./test_images/solidYellowCurve.jpg "Original Solid Yellow Curve"
 [image2]: [./test_images/solidYellowCurve2.jpg] "Original Solid Yellow Curve 2"
 [image3]: [./test_images/solidYellowLeft.jpg] "Original Solid Yellow Left"
 
