@@ -10,6 +10,8 @@ My software pipeline consisted of 10 steps:
 [image2]: [./test_images/solidYellowCurve2.jpg] "Original Solid Yellow Curve 2"
 [image3]: [./test_images/solidYellowLeft.jpg] "Original Solid Yellow Left"
 
+![image1]
+
 1. HSV conversion + Mask to expose yellow and white colors (lanes)
 Convert original image to HSV space and create yellow and white binary masks. Masks are then combined and applied on input image to expose lane lines.
 
