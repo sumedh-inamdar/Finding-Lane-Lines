@@ -6,7 +6,7 @@
 
 
 My software pipeline consisted of 10 steps:
-[image1]:./test_images/solidYellowCurve.jpg "Original Solid Yellow Curve"
+[image1]: ./test_images/solidYellowCurve.jpg "Original Solid Yellow Curve"
 [image2]: [./test_images/solidYellowCurve2.jpg] "Original Solid Yellow Curve 2"
 [image3]: [./test_images/solidYellowLeft.jpg] "Original Solid Yellow Left"
 
