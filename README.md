@@ -3,7 +3,7 @@
 
 #### Project Goals: Implement a software pipeline to identify left/right lane lines from a video stream and overlay a solid line marker.
 
-[![](http://img.youtube.com/vi/gDesUAt9_fs/0.jpg)](http://www.youtube.com/watch?v=gDesUAt9_fs "Finding Lane Lines")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/gDesUAt9_fs/0.jpg)](http://www.youtube.com/watch?v=gDesUAt9_fs) 
 
 Original set of images:</br>
 <img src="./test_images/solidYellowCurve.jpg" height="160"> <img src="./test_images/solidYellowCurve2.jpg" height="160"> <img src="./test_images/solidYellowLeft.jpg" height="160">
