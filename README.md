@@ -1,56 +1,71 @@
-# **Finding Lane Lines on the Road** 
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-<img src="examples/laneLines_thirdPass.jpg" width="480" alt="Combined Image" />
+# **Finding Lane Lines on the Road**
 
-Overview
----
+#### Project Goals: Implement a software pipeline to identify left/right lane lines from a video stream and overlay a solid line marker.
 
-When we drive, we use our eyes to decide where to go.  The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle.  Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
+Original set of images:</br>
+<img src="./test_images/solidYellowCurve.jpg" height="160"> <img src="./test_images/solidYellowCurve2.jpg" height="160"> <img src="./test_images/solidYellowLeft.jpg" height="160">
 
-In this project you will detect lane lines in images using Python and OpenCV.  OpenCV means "Open-Source Computer Vision", which is a package that has many useful tools for analyzing images.  
+#### My software pipeline consisted of 10 steps:<br>
 
-To complete the project, two files will be submitted: a file containing project code and a file containing a brief write up explaining your solution. We have included template files to be used both for the [code](https://github.com/udacity/CarND-LaneLines-P1/blob/master/P1.ipynb) and the [writeup](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md).The code file is called P1.ipynb and the writeup template is writeup_template.md 
+1. <b>HSV conversion + Mask to expose yellow and white colors (lanes):</b> Convert original image to HSV space and create yellow and white binary masks. Masks are then combined and applied on input image to expose lane lines.
 
-To meet specifications in the project, take a look at the requirements in the [project rubric](https://review.udacity.com/#!/rubrics/322/view)
+<img src="./test_images/solidYellowCurve_hsvMasked.jpg" height="160"> <img src="./test_images/solidYellowCurve2_hsvMasked.jpg" height="160"> <img src="./test_images/solidYellowLeft_hsvMasked.jpg" height="160">
 
+2. <b>Grayscale conversion:</b> apply grayscale conversion to increase contrast between road and edges of lane
 
-Creating a Great Writeup
----
-For this project, a great writeup should provide a detailed response to the "Reflection" section of the [project rubric](https://review.udacity.com/#!/rubrics/322/view). There are three parts to the reflection:
+<img src="./test_images/solidYellowCurve_gray.jpg" height="160"> <img src="./test_images/solidYellowCurve2_gray.jpg" height="160"> <img src="./test_images/solidYellowLeft_gray.jpg" height="160">
 
-1. Describe the pipeline
+3. <b>Gaussian Blur Filter:</b> Apply gaussian blur filter to smoothen edges and remove gaussian noise
 
-2. Identify any shortcomings
+<img src="./test_images/solidYellowCurve_gaussianBlur.jpg" height="160"> <img src="./test_images/solidYellowCurve2_gaussianBlur.jpg" height="160"> <img src="./test_images/solidYellowLeft_gaussianBlur.jpg" height="160">
 
-3. Suggest possible improvements
+4. <b>Canny Edge Filter:</b> Apply canny edge filter to identify edges through the intensity gradient of the image
 
-We encourage using images in your writeup to demonstrate how your pipeline works.  
+<img src="./test_images/solidYellowCurve_canny.jpg" height="160"> <img src="./test_images/solidYellowCurve2_canny.jpg" height="160"> <img src="./test_images/solidYellowLeft_canny.jpg" height="160">
 
-All that said, please be concise!  We're not looking for you to write a book here: just a brief description.
+5. <b>Region of interest:</b> Apply image mask to only retain the portion of the image defined by a polygon with given vertices
 
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup. Here is a link to a [writeup template file](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md). 
+<img src="./test_images/solidYellowCurve_regionMask.jpg" height="160"> <img src="./test_images/solidYellowCurve2_regionMask.jpg" height="160"> <img src="./test_images/solidYellowLeft_regionMask.jpg" height="160">
 
+6. <b>Hough lines:</b> Draw hough lines on cropped canny image through a hough transformation.
 
-The Project
----
+<img src="./test_images/solidYellowCurve_houghLinesRaw.jpg" height="160"> <img src="./test_images/solidYellowCurve2_houghLinesRaw.jpg" height="160"> <img src="./test_images/solidYellowLeft_houghLinesRaw.jpg" height="160">
 
-## If you have already installed the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) you should be good to go!   If not, you should install the starter kit to get started on this project. ##
+For 4-6: For a given image, you can use canny edge detection to find points associated with edges. These points then become lines in hough space. The intersection of these lines then determine where we have identified a line.
 
-**Step 1:** Set up the [CarND Term1 Starter Kit](https://classroom.udacity.com/nanodegrees/nd013/parts/fbf77062-5703-404e-b60c-95b78b2f3f9e/modules/83ec35ee-1e02-48a5-bdb7-d244bd47c2dc/lessons/8c82408b-a217-4d09-b81d-1bda4c6380ef/concepts/4f1870e0-3849-43e4-b670-12e6f2d4b7a7) if you haven't already.
+7. <b>Slope and Location filters:</b> Reject lines that do not meet slope and location requirements of left and right lanes (e.g., left lane: 11 deg < slope < 58 deg and resides on left side of image) and color code lane lines as left(red) and right(blue).
 
-**Step 2:** Open the code in a Jupyter Notebook
+<img src="./test_images/solidYellowCurve_houghT.jpg" height="160"> <img src="./test_images/solidYellowCurve2_houghT.jpg" height="160"> <img src="./test_images/solidYellowLeft_houghT.jpg" height="160">
 
-You will complete the project code in a Jupyter notebook.  If you are unfamiliar with Jupyter Notebooks, check out [Udacity's free course on Anaconda and Jupyter Notebooks](https://classroom.udacity.com/courses/ud1111) to get started.
+8. Fit a first degree polynomial to the (x,y) points for the left and right lanes separately.
+```python
+left = np.polyfit(leftLaneX, leftLaneY, 1) #get slope and y-intercept of polyfit line
+right = np.polyfit(rightLaneX, rightLaneY, 1)
+```
 
-Jupyter is an Ipython notebook where you can run blocks of code and see results interactively.  All the code for this project is contained in a Jupyter notebook. To start Jupyter in your browser, use terminal to navigate to your project directory and then run the following command at the terminal prompt (be sure you've activated your Python 3 carnd-term1 environment as described in the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) installation instructions!):
+9. <b>Exponential Moving Average Filter:</b> Feed the polynomial coefficients (slope and y-intercept) into an exponential moving average filter. This is to help smoothen the "jumpy" lines that appear moving frame to frame during the video. The filter applies an exponential smoothing filter on the previous 10 lines while applying the highest weighting to the newest lines.
 
-`> jupyter notebook`
+<img src="./test_images/EMAweights.png"> 
 
-A browser window will appear showing the contents of the current directory.  Click on the file called "P1.ipynb".  Another browser window will appear displaying the notebook.  Follow the instructions in the notebook to complete the project.  
+9. <b>Extrapolate:</b> Extrapolate lines to end of lane using slope and y-intercept values from EMA filter.
 
-**Step 3:** Complete the project and submit both the Ipython notebook and the project writeup
+<img src="./test_images/solidYellowCurve_extrapolate.jpg" height="160"> <img src="./test_images/solidYellowCurve2_extrapolate.jpg" height="160"> <img src="./test_images/solidYellowLeft_extrapolate.jpg" height="160">
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+10. <b>Final Image:</b> Draw lines on input image for every frame
 
+<img src="./test_images/solidYellowCurve_finalImage.jpg" height="160"> <img src="./test_images/solidYellowCurve2_finalImage.jpg" height="160"> <img src="./test_images/solidYellowLeft_finalImage.jpg" height="160">
+
+### 2. Potential shortcomings with pipeline
+
+1. False choosing of lines from a car if it were to cross into the region of interest.
+2. Can only detect lines under well lit conditions with sufficient contrast between lanes and road.
+3. Sharp curves
+4. Identifying missing, choppy, or noisy lane lines
+
+### 3. Possible Improvements
+
+1. Placing higher weight on longer lane lines to reduce effect of noise
+2. Using higher power polynomial to draw curves instead of lines
+3. Automating the tuning of gaussian blur filter, canny edge, and hough transform through a parameter sweep
+4. Use AI to train and auto detect lines
