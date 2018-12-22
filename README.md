@@ -1,13 +1,9 @@
 
 # **Finding Lane Lines on the Road**
 
-<figure class="video_container">
-  <video controls="true" allowfullscreen="true">
-    <source src="./test_videos_output/challenge_lines.mp4" type="video/mp4">
-  </video>
-</figure>
-
 #### Project Goals: Implement a software pipeline to identify left/right lane lines from a video stream and overlay a solid line marker.
+
+[![](http://img.youtube.com/vi/gDesUAt9_fs/0.jpg)](http://www.youtube.com/watch?v=gDesUAt9_fs "Finding Lane Lines")
 
 Original set of images:</br>
 <img src="./test_images/solidYellowCurve.jpg" height="160"> <img src="./test_images/solidYellowCurve2.jpg" height="160"> <img src="./test_images/solidYellowLeft.jpg" height="160">
